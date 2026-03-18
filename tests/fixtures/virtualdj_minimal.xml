@@ -1,0 +1,18 @@
+<?xml version='1.0' encoding='utf-8'?>
+<VirtualDJ_Database Version="8.5">
+  <Song FilePath="C:\Music\track_one.mp3" FileSize="8000000">
+    <Tags Author="Artist A" Title="Test Track One" Genre="Techno" Album="Album One"/>
+    <Infos SongLength="240.000" Bitrate="320"/>
+    <Scan Version="801" Bpm="0.468750" Volume="0.8" Key="8m"/>
+    <Poi Pos="-0.002" Type="beatgrid" Name=""/>
+    <Poi Pos="4.123" Type="cue" Num="0" Name="Intro" Color="#28E214"/>
+    <Poi Pos="32.500" Type="cue" Num="1" Name="Drop" Color="#E22814"/>
+    <Poi Pos="16.000" Type="loop" Num="0" Name="" Size="16.000"/>
+  </Song>
+  <Song FilePath="C:\Music\track_two.flac" FileSize="24000000">
+    <Tags Author="Artist B" Title="Test Track Two" Genre="House"/>
+    <Infos SongLength="360.000"/>
+    <Scan Version="801" Bpm="0.483871"/>
+    <Poi Pos="8.000" Type="cue" Num="0" Name="Cue 1"/>
+  </Song>
+</VirtualDJ_Database>

@@ -1,0 +1,4 @@
+pyrekordbox>=0.4.4
+serato-tools>=1.0.0
+mutagen>=1.47.0
+PySide6>=6.6.0
