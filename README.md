@@ -14,12 +14,13 @@
 
 ConaConverter is a lightweight, cross-platform desktop app that lets DJs move their library data between major DJ software platforms without losing their work — hot cues, memory cues, loops, beat grids, BPM, key, and genre all come along for the ride.
 
-| From / To     | Rekordbox | Serato | Engine OS | VirtualDJ |
-|---------------|:---------:|:------:|:---------:|:---------:|
-| **Rekordbox**  | —         | ✅     | ✅         | ✅         |
-| **Serato**     | ✅         | —      | ✅         | ✅         |
-| **Engine OS**  | ✅         | ✅     | —          | ✅         |
-| **VirtualDJ**  | ✅         | ✅     | ✅          | —         |
+| From / To     | Rekordbox | Serato | Engine OS | VirtualDJ | Traktor |
+|---------------|:---------:|:------:|:---------:|:---------:|:-------:|
+| **Rekordbox**  | —         | ✅     | ✅         | ✅         | ✅       |
+| **Serato**     | ✅         | —      | ✅         | ✅         | ✅       |
+| **Engine OS**  | ✅         | ✅     | —          | ✅         | ✅       |
+| **VirtualDJ**  | ✅         | ✅     | ✅          | —         | ✅       |
+| **Traktor**    | ✅         | ✅     | ✅          | ✅         | —       |
 
 ---
 
@@ -48,6 +49,7 @@ ConaConverter is a lightweight, cross-platform desktop app that lets DJs move th
 | **Serato**     | `.crate` file from `_Serato_/SubCrates/`             |
 | **Engine OS**  | `Engine Library` folder (contains `m.db` + `p.db`)  |
 | **VirtualDJ**  | `database.xml`                                       |
+| **Traktor**    | `collection.nml` from the Traktor data folder        |
 
 ---
 
@@ -96,19 +98,19 @@ Pre-built binaries for Windows (`.exe`), macOS (`.app`), and Linux will be avail
 
 ## What gets converted
 
-| Data                  | Rekordbox | Serato | Engine OS | VirtualDJ |
-|-----------------------|:---------:|:------:|:---------:|:---------:|
-| Track title / artist  | ✅         | ✅     | ✅         | ✅         |
-| Album / genre         | ✅         | ✅     | ✅         | ✅         |
-| BPM                   | ✅         | ✅     | ✅         | ✅         |
-| Key                   | ✅         | ✅     | ✅         | ✅         |
-| Hot cues (slots 0–7)  | ✅         | ✅     | ✅         | ✅         |
-| Memory cues           | ✅         | ✅     | —          | ✅         |
-| Loops                 | ✅         | ✅     | ✅         | ✅         |
-| Beat grid             | ✅         | ✅     | ✅         | ✅         |
-| Cue colors            | ✅         | ✅     | ✅         | ✅         |
-| Waveforms             | —          | —      | —          | —          |
-| Artwork               | —          | —      | —          | —          |
+| Data                  | Rekordbox | Serato | Engine OS | VirtualDJ | Traktor |
+|-----------------------|:---------:|:------:|:---------:|:---------:|:-------:|
+| Track title / artist  | ✅         | ✅     | ✅         | ✅         | ✅       |
+| Album / genre         | ✅         | ✅     | ✅         | ✅         | ✅       |
+| BPM                   | ✅         | ✅     | ✅         | ✅         | ✅       |
+| Key                   | ✅         | ✅     | ✅         | ✅         | ✅       |
+| Hot cues (slots 0–7)  | ✅         | ✅     | ✅         | ✅         | ✅       |
+| Memory cues           | ✅         | ✅     | —          | ✅         | ✅       |
+| Loops                 | ✅         | ✅     | ✅         | ✅         | ✅       |
+| Beat grid             | ✅         | ✅     | ✅         | ✅         | ✅       |
+| Cue colors            | ✅         | ✅     | ✅         | ✅         | —        |
+| Waveforms             | —          | —      | —          | —          | —        |
+| Artwork               | —          | —      | —          | —          | —        |
 
 ---
 
@@ -118,6 +120,9 @@ Pre-built binaries for Windows (`.exe`), macOS (`.app`), and Linux will be avail
 ConaConverter reads and writes **Rekordbox XML** (the export format), not the `master.db` database file. Before converting:
 - In Rekordbox, go to **File > Export Collection in XML Format**
 - Import back via **File > Import > rekordbox xml**
+
+### Traktor
+ConaConverter reads and writes **Traktor NML** (`collection.nml`). Export from Traktor via _File > Export Collection_ and import back with _File > Import Collection_. Cue colors are not stored in the NML format and will not be carried across.
 
 ### Serato
 Writing to Serato embeds cue and beat grid data as tags **directly inside your audio files**. ConaConverter will show a warning dialog before doing this. **Back up your music files before converting to Serato format.**

@@ -13,8 +13,21 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - Pre-built release binaries (Windows / macOS / Linux)
 - Nested playlist / folder support
 - Batch conversion (multiple files at once)
-- Traktor NML support
 - Key notation conversion (Camelot ↔ musical)
+- OneLibrary support (emerging universal standard — Pioneer + Algoriddim + Native Instruments)
+
+---
+
+## [0.2.0] - 2026-03-17
+
+### Added
+- Traktor NML reader and writer (`collection.nml`)
+  - Hot cues, memory cues, loops, beat grid, full track metadata
+  - Path encoding/decoding for Traktor's `/:dir/:` format (Windows and macOS)
+  - Beat grid markers (CUE_V2 TYPE=4) read/written correctly and kept separate from cue points
+  - Round-trip tested; path codec unit-tested independently
+- Traktor added to format auto-detector (`.nml` extension, root tag `<NML>`)
+- Updated README conversion matrix and supported file types table
 
 ---
 

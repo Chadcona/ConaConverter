@@ -1,0 +1,53 @@
+<?xml version='1.0' encoding='utf-8'?>
+<NML VERSION="23">
+  <HEAD COMPANY="www.native-instruments.com" PROGRAM="Traktor" />
+  <COLLECTION ENTRIES="2">
+    <ENTRY MODIFIED_DATE="2024/1/1" MODIFIED_TIME="43200"
+           AUDIO_ID="AABBCCDDEEFF00112233445566778899"
+           TITLE="Test Track One" ARTIST="Artist A">
+      <LOCATION DIR="/:C/:Music/:" FILE="track_one.mp3" VOLUME="C:" VOLUMEID="C:" />
+      <ALBUM TRACK="0" TITLE="Album One" />
+      <INFO BITRATE="320000" GENRE="Techno" COMMENT="First track"
+            KEY="8m" PLAYTIME="240" PLAYTIME_FLOAT="240.000" />
+      <TEMPO BPM="128.000000" BPM_QUALITY="100" />
+      <MUSICAL_KEY VALUE="0" />
+      <CUE_V2 NAME="" DISPL_ORDER="0" TYPE="4"
+              START="150.000000" LEN="0.000000" REPEATS="-1" HOTCUE="-1" />
+      <CUE_V2 NAME="Intro" DISPL_ORDER="1" TYPE="0"
+              START="4123.000000" LEN="0.000000" REPEATS="-1" HOTCUE="0" />
+      <CUE_V2 NAME="Drop" DISPL_ORDER="2" TYPE="0"
+              START="32500.000000" LEN="0.000000" REPEATS="-1" HOTCUE="1" />
+      <CUE_V2 NAME="" DISPL_ORDER="3" TYPE="0"
+              START="0.000000" LEN="0.000000" REPEATS="-1" HOTCUE="-1" />
+      <CUE_V2 NAME="Loop A" DISPL_ORDER="4" TYPE="5"
+              START="16000.000000" LEN="16000.000000" REPEATS="-1" HOTCUE="2" />
+    </ENTRY>
+    <ENTRY MODIFIED_DATE="2024/1/1" MODIFIED_TIME="43200"
+           AUDIO_ID="99887766554433221100FFEEDDCCBBAA"
+           TITLE="Test Track Two" ARTIST="Artist B">
+      <LOCATION DIR="/:C/:Music/:" FILE="track_two.flac" VOLUME="C:" VOLUMEID="C:" />
+      <ALBUM TRACK="0" TITLE="Album Two" />
+      <INFO BITRATE="0" GENRE="House" COMMENT=""
+            KEY="11A" PLAYTIME="360" PLAYTIME_FLOAT="360.000" />
+      <TEMPO BPM="124.000000" BPM_QUALITY="100" />
+      <CUE_V2 NAME="Cue 1" DISPL_ORDER="0" TYPE="0"
+              START="8000.000000" LEN="0.000000" REPEATS="-1" HOTCUE="0" />
+    </ENTRY>
+  </COLLECTION>
+  <PLAYLISTS>
+    <NODE TYPE="FOLDER" NAME="$ROOT" COUNT="1">
+      <SUBNODES COUNT="1">
+        <NODE TYPE="PLAYLIST" NAME="Test Playlist">
+          <PLAYLIST ENTRIES="2" TYPE="LIST" UUID="00000000000000000000000000000000">
+            <ENTRY>
+              <PRIMARYKEY TYPE="TRACK" KEY="C:/Music/track_one.mp3" />
+            </ENTRY>
+            <ENTRY>
+              <PRIMARYKEY TYPE="TRACK" KEY="C:/Music/track_two.flac" />
+            </ENTRY>
+          </PLAYLIST>
+        </NODE>
+      </SUBNODES>
+    </NODE>
+  </PLAYLISTS>
+</NML>

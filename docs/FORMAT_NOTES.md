@@ -256,6 +256,96 @@ VirtualDJ uses its own key notation (e.g. `"8m"` for 8 minor, `"11A"` for Camelo
 
 ---
 
+## Traktor (Native Instruments)
+
+### File used
+
+**`collection.nml`** — Traktor's main library file, exported via _File > Export Collection_.
+
+Default location:
+
+| OS | Location |
+|---|---|
+| Windows | `C:\Users\{name}\Documents\Native Instruments\Traktor Pro 3\` |
+| macOS | `~/Documents/Native Instruments/Traktor Pro 3/` |
+
+### XML structure
+
+```xml
+<NML VERSION="23">
+  <HEAD COMPANY="www.native-instruments.com" PROGRAM="Traktor"/>
+  <COLLECTION ENTRIES="N">
+    <ENTRY TITLE="Track Title" ARTIST="Artist Name" AUDIO_ID="..." MODIFIED_DATE="2024/1/1">
+      <LOCATION DIR="/:Users/:name/:Music/:" FILE="track.mp3" VOLUME="C:" VOLUMEID="C:"/>
+      <ALBUM TRACK="0" TITLE="Album Name"/>
+      <INFO BITRATE="320000" GENRE="Techno" COMMENT="" KEY="8m"
+            PLAYTIME="240" PLAYTIME_FLOAT="240.000"/>
+      <TEMPO BPM="128.000000" BPM_QUALITY="100"/>
+      <CUE_V2 NAME="Intro" DISPL_ORDER="0" TYPE="0" START="4123.000000"
+              LEN="0.000000" REPEATS="-1" HOTCUE="0"/>
+    </ENTRY>
+  </COLLECTION>
+  <PLAYLISTS>
+    <NODE TYPE="FOLDER" NAME="$ROOT" COUNT="1">
+      <SUBNODES COUNT="1">
+        <NODE TYPE="PLAYLIST" NAME="My Playlist">
+          <PLAYLIST ENTRIES="1" TYPE="LIST" UUID="...">
+            <ENTRY>
+              <PRIMARYKEY TYPE="TRACK" KEY="C:/Users/name/Music/track.mp3"/>
+            </ENTRY>
+          </PLAYLIST>
+        </NODE>
+      </SUBNODES>
+    </NODE>
+  </PLAYLISTS>
+</NML>
+```
+
+### CUE_V2 attributes
+
+| Attribute | Description |
+|---|---|
+| `TYPE` | `0` = cue, `1` = fade-in, `2` = fade-out, `3` = load, `4` = **grid marker**, `5` = loop |
+| `HOTCUE` | `-1` = not a hot cue (memory cue); `0–7` = hot cue slot index |
+| `START` | Position in **milliseconds** (float string) |
+| `LEN` | Length in milliseconds for loops; `0` for all other types |
+| `NAME` | Label string |
+| `DISPL_ORDER` | Display order in Traktor's cue list |
+| `REPEATS` | Loop repeat count; `-1` = infinite |
+
+> **Note:** Traktor does not store cue colors in the NML format. Colors set in Traktor are not exported and will not survive a round-trip through ConaConverter.
+
+### Beat grid
+
+Beat grid markers are stored as `CUE_V2` elements with `TYPE="4"`. The `START` attribute gives the position of the beat anchor in milliseconds. The BPM comes from the `<TEMPO BPM="..."/>` element on the same `ENTRY`.
+
+ConaConverter reads all TYPE=4 elements as `BeatGridMarker` objects and writes them back as TYPE=4 elements. They are kept strictly separate from cue points.
+
+### LOCATION path encoding
+
+Traktor uses a non-standard path encoding where each directory component is prefixed with `/:`:
+
+```
+/Users/john/Music/  →  /:Users/:john/:Music/:
+```
+
+On Windows, the drive letter is stored separately in the `VOLUME` attribute:
+```
+VOLUME="C:"  DIR="/:Users/:john/:Music/:"  FILE="track.mp3"
+→ C:/Users/john/Music/track.mp3
+```
+
+On macOS, `VOLUME` holds the volume name (e.g. `"Macintosh HD"`), but the path is reconstructed by decoding the `DIR` attribute directly (which already starts with `/`).
+
+The `PRIMARYKEY KEY` attribute in the `PLAYLISTS` section uses the standard decoded path (no `/:` encoding) as the track lookup key.
+
+### References
+
+- [traktor-nml-utils Python library](https://github.com/wolkenarchitekt/traktor-nml-utils)
+- [Mixxx NML format notes](https://github.com/mixxxdj/mixxx/wiki/Traktor-Library-Format)
+
+---
+
 ## Cross-format compatibility notes
 
 ### Cue slot mapping

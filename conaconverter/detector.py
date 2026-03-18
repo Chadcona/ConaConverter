@@ -29,6 +29,16 @@ def detect_format(path: str) -> str:
     if path.endswith(".db"):
         return "engineos"
 
+    # Traktor: .nml extension
+    if path.endswith(".nml"):
+        try:
+            root_tag = _read_xml_root_tag(path)
+        except (ET.ParseError, OSError) as exc:
+            raise ValueError(f"Cannot parse NML file: {path}") from exc
+        if root_tag == "NML":
+            return "traktor"
+        raise ValueError(f"Not a Traktor NML file: root tag is <{root_tag}>")
+
     # XML-based formats: inspect the root element tag
     if path.endswith(".xml"):
         try:
@@ -49,7 +59,7 @@ def detect_format(path: str) -> str:
     raise ValueError(
         f"Cannot determine format for: {path!r}\n"
         "Supported files: .crate (Serato), rekordbox.xml, database.xml (VirtualDJ), "
-        ".db or Engine Library folder (Engine OS)."
+        ".db or Engine Library folder (Engine OS), collection.nml (Traktor)."
     )
 
 
