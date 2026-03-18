@@ -231,10 +231,11 @@ class TraktorReader(BaseReader):
 
             # TYPE 4 = grid marker → BeatGridMarker
             if cue_type_int == 4:
-                track.beat_grid.append(BeatGridMarker(
-                    position_seconds=ms_to_seconds(start_ms),
-                    bpm=track.bpm or 0.0,
-                ))
+                if track.bpm is not None and track.bpm > 0:
+                    track.beat_grid.append(BeatGridMarker(
+                        position_seconds=ms_to_seconds(start_ms),
+                        bpm=track.bpm,
+                    ))
                 continue
 
             cue_type = _TRAKTOR_TYPE_TO_CUE.get(cue_type_int, CueType.HOT_CUE)

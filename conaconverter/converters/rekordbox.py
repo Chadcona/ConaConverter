@@ -205,7 +205,6 @@ class RekordboxWriter(BaseWriter):
             ET.SubElement(playlist_node, "TRACK", Key=tid)
 
         # Pretty-print
-        _indent(root)
         tree = ET.ElementTree(root)
         ET.indent(tree, space="  ")
         tree.write(output_path, encoding="utf-8", xml_declaration=True)
@@ -260,20 +259,3 @@ class RekordboxWriter(BaseWriter):
                           Bpm=f"{marker.bpm:.2f}",
                           Metro="4/4",
                           Battito="1")
-
-
-def _indent(elem: ET.Element, level: int = 0) -> None:
-    """Add pretty-print indentation (fallback for Python < 3.9)."""
-    indent = "\n" + "  " * level
-    if len(elem):
-        if not elem.text or not elem.text.strip():
-            elem.text = indent + "  "
-        if not elem.tail or not elem.tail.strip():
-            elem.tail = indent
-        for child in elem:
-            _indent(child, level + 1)
-        if not child.tail or not child.tail.strip():  # type: ignore[reportUnboundVariable]
-            child.tail = indent  # type: ignore[reportUnboundVariable]
-    else:
-        if level and (not elem.tail or not elem.tail.strip()):
-            elem.tail = indent

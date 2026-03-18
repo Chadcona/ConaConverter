@@ -36,7 +36,7 @@ _VDJ_TYPE_TO_CUE = {
     "cue":      CueType.HOT_CUE,
     "automix":  CueType.MEMORY,
     "loop":     CueType.LOOP,
-    "fade":     CueType.FADE_IN,
+    "fade":     CueType.FADE_IN,   # refined to FADE_OUT via Point attr on read
 }
 
 _CUE_TO_VDJ_TYPE = {
@@ -46,6 +46,9 @@ _CUE_TO_VDJ_TYPE = {
     CueType.FADE_IN:  "fade",
     CueType.FADE_OUT: "fade",
 }
+
+# VirtualDJ uses the Point attribute to distinguish fade direction
+_FADE_OUT_POINTS = {"fadeEnd", "fadeOut", "cutEnd", "realEnd"}
 
 
 def _parse_vdj_color(color_str: Optional[str]) -> Optional[int]:
@@ -115,14 +118,21 @@ class VirtualDjReader(BaseReader):
 
             if poi_type == "beatgrid":
                 # The beatgrid Poi marks beat 1; BPM comes from Scan
-                bpm = track.bpm or 0.0
-                track.beat_grid.append(BeatGridMarker(
-                    position_seconds=pos,
-                    bpm=bpm,
-                ))
+                if track.bpm is not None and track.bpm > 0:
+                    track.beat_grid.append(BeatGridMarker(
+                        position_seconds=pos,
+                        bpm=track.bpm,
+                    ))
                 continue
 
             cue_type = _VDJ_TYPE_TO_CUE.get(poi_type, CueType.HOT_CUE)
+
+            # Distinguish fade-in from fade-out via Point attribute
+            if cue_type == CueType.FADE_IN:
+                point = poi.get("Point", "")
+                if point in _FADE_OUT_POINTS:
+                    cue_type = CueType.FADE_OUT
+
             num_str = poi.get("Num", "0")
             try:
                 num = int(num_str)
@@ -208,6 +218,10 @@ class VirtualDjWriter(BaseWriter):
             }
             if cue.color_rgb is not None:
                 attribs["Color"] = _format_vdj_color(cue.color_rgb)
+            if cue.cue_type == CueType.FADE_IN:
+                attribs["Point"] = "fadeStart"
+            elif cue.cue_type == CueType.FADE_OUT:
+                attribs["Point"] = "fadeEnd"
             if cue.cue_type == CueType.LOOP and cue.loop_end_seconds is not None:
                 size = cue.loop_end_seconds - cue.position_seconds
                 attribs["Size"] = f"{size:.3f}"

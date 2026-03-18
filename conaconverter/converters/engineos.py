@@ -27,6 +27,7 @@ IMPORTANT:
 
 from __future__ import annotations
 
+import logging
 import os
 import sqlite3
 import struct
@@ -34,6 +35,8 @@ import zlib
 from typing import List, Optional, Tuple
 
 from conaconverter.converters.base import BaseReader, BaseWriter
+
+log = logging.getLogger(__name__)
 from conaconverter.models import (
     BeatGridMarker,
     CuePoint,
@@ -115,9 +118,24 @@ def _parse_quick_cues(blob: bytes) -> List[CuePoint]:
 
 
 def _encode_quick_cues(cue_points: List[CuePoint]) -> bytes:
-    """Encode a list of CuePoints into the quickCues BLOB format."""
-    # Build a slot map from cue num → CuePoint
+    """Encode a list of CuePoints into the quickCues BLOB format.
+
+    Engine OS only supports 8 hot cue slots (0-7). Memory cues, loops,
+    and fade markers cannot be stored in quickCues and are logged as
+    warnings so the caller (and ultimately the user) knows data was lost.
+    """
+    # Build a slot map from cue num → CuePoint (hot cues only)
     slot_map = {c.num: c for c in cue_points if c.cue_type == CueType.HOT_CUE and 0 <= c.num < _NUM_CUE_SLOTS}
+
+    # Warn about cue types that Engine OS cannot store
+    dropped = [c for c in cue_points if c.cue_type != CueType.HOT_CUE or c.num < 0 or c.num >= _NUM_CUE_SLOTS]
+    if dropped:
+        types = set(c.cue_type.value for c in dropped)
+        log.warning(
+            "Engine OS only supports hot cues (slots 0-7). "
+            "Dropping %d cue(s) of type(s): %s",
+            len(dropped), ", ".join(sorted(types)),
+        )
 
     data = b""
     for slot in range(_NUM_CUE_SLOTS):
@@ -242,7 +260,7 @@ class EngineOsReader(BaseReader):
             (track_id, title, artist, album, genre, comment,
              bpm, key, length, path, filename, sample_rate) = row
 
-            file_path = os.path.join(path or "", filename or "") if not path else path
+            file_path = os.path.join(path, filename) if path and filename else (path or filename or "")
             track = Track(
                 file_path=file_path,
                 title=title or "",

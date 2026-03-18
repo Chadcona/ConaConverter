@@ -9,7 +9,7 @@ import xml.etree.ElementTree as ET
 def detect_format(path: str) -> str:
     """Return the format key for the file/folder at *path*.
 
-    Returns one of: 'serato', 'engineos', 'virtualdj', 'rekordbox'
+    Returns one of: 'serato', 'engineos', 'virtualdj', 'rekordbox', 'traktor'
 
     Raises ValueError if the format cannot be determined.
     """

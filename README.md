@@ -5,7 +5,7 @@
 ![Python](https://img.shields.io/badge/Python-3.10%2B-blue?logo=python&logoColor=white)
 ![PySide6](https://img.shields.io/badge/PySide6-Qt6-41CD52?logo=qt&logoColor=white)
 ![License](https://img.shields.io/badge/license-MIT-green)
-![Tests](https://img.shields.io/badge/tests-45%20passing-brightgreen)
+![Tests](https://img.shields.io/badge/tests-68%20passing-brightgreen)
 ![Platform](https://img.shields.io/badge/platform-Windows%20%7C%20macOS%20%7C%20Linux-lightgrey)
 
 ---
@@ -92,6 +92,7 @@ Pre-built binaries for Windows (`.exe`), macOS (`.app`), and Linux will be avail
    - **Rekordbox:** File > Import > rekordbox xml
    - **Engine OS:** File > Import > Import from rekordbox.xml (or open folder)
    - **VirtualDJ:** Browser > Files > load database.xml
+   - **Traktor:** File > Import Collection
    - **Serato:** Drag the `.crate` file into Serato's crates panel
 
 ---
@@ -166,7 +167,8 @@ ConaConverter/
 │   │   ├── rekordbox.py
 │   │   ├── serato.py
 │   │   ├── engineos.py
-│   │   └── virtualdj.py
+│   │   ├── virtualdj.py
+│   │   └── traktor.py
 │   └── ui/
 │       ├── mainwindow.py    # Main window
 │       └── widgets.py       # DropZoneWidget
@@ -174,7 +176,8 @@ ConaConverter/
 │   ├── fixtures/            # Synthetic test files
 │   ├── test_rekordbox.py
 │   ├── test_virtualdj.py
-│   └── test_engineos.py
+│   ├── test_engineos.py
+│   └── test_traktor.py
 ├── ConaConverter.spec       # PyInstaller build spec
 ├── requirements.txt
 └── requirements-dev.txt
@@ -187,7 +190,7 @@ ConaConverter/
 - [ ] Nested playlist / folder support
 - [ ] Batch conversion (multiple files at once)
 - [ ] Key notation conversion (Camelot ↔ musical)
-- [ ] Traktor NML support
+- [x] Traktor NML support
 - [ ] Pre-built release binaries (Windows / macOS / Linux)
 - [ ] Waveform data preservation (where technically possible)
 
@@ -212,3 +215,4 @@ Format documentation sourced from:
 - [Mixxx Engine Library Format wiki](https://github.com/mixxxdj/mixxx/wiki/Engine-Library-Format)
 - [Mixxx Serato Database Format wiki](https://github.com/mixxxdj/mixxx/wiki/Serato-Database-Format)
 - [Mixxx VirtualDJ Cue Storage Format wiki](https://github.com/mixxxdj/mixxx/wiki/Virtual-Dj-Cue-Storage-Format)
+- [Mixxx Traktor Library Format wiki](https://github.com/mixxxdj/mixxx/wiki/Traktor-Library-Format)

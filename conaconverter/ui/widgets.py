@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from PySide6.QtCore import Qt, Signal
 from PySide6.QtGui import QDragEnterEvent, QDropEvent, QMouseEvent
-from PySide6.QtWidgets import QFileDialog, QLabel, QSizePolicy
+from PySide6.QtWidgets import QFileDialog, QLabel, QMenu, QSizePolicy
 
 
 class DropZoneWidget(QLabel):
@@ -68,18 +68,32 @@ class DropZoneWidget(QLabel):
 
     def mousePressEvent(self, event: QMouseEvent) -> None:
         if event.button() == Qt.MouseButton.LeftButton:
-            self._open_browse_dialog()
+            menu = QMenu(self)
+            menu.addAction("Browse for file…", self._open_browse_dialog)
+            menu.addAction("Browse for folder (Engine OS)…", self._open_folder_dialog)
+            menu.exec(event.globalPosition().toPoint())
 
     def _open_browse_dialog(self) -> None:
         path, _ = QFileDialog.getOpenFileName(
             self,
             "Open playlist file",
             "",
-            "DJ Playlist Files (*.crate *.xml *.db);;"
+            "DJ Playlist Files (*.crate *.xml *.db *.nml);;"
             "Serato Crate (*.crate);;"
             "Rekordbox / VirtualDJ XML (*.xml);;"
+            "Traktor NML (*.nml);;"
             "Engine OS Database (*.db);;"
             "All Files (*)",
+        )
+        if path:
+            self.file_dropped.emit(path)
+
+    def _open_folder_dialog(self) -> None:
+        """Browse for an Engine OS library folder."""
+        path = QFileDialog.getExistingDirectory(
+            self,
+            "Open Engine OS library folder",
+            "",
         )
         if path:
             self.file_dropped.emit(path)

@@ -18,6 +18,20 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
 
+## [0.2.1] - 2026-03-17
+
+### Fixed
+- VirtualDJ fade-out markers were silently converted to fade-in on round-trip — now uses the `Point` attribute (`fadeStart` / `fadeEnd`) to distinguish direction
+- Beat grid markers created with BPM=0 when track BPM was unknown (VirtualDJ and Traktor readers) — now skips grid markers when BPM is not available
+- Engine OS file path construction was broken for tracks with both `path` and `filename` columns
+- Rekordbox XML writer produced double-indented output (called both `_indent()` and `ET.indent()`)
+- Engine OS writer silently dropped memory cues, loops, and fade markers without any indication — now logs a warning listing the dropped cue types
+- UI file browser was missing `.nml` filter for Traktor files
+- UI had no way to browse for Engine OS library folders (only files) — click now offers a context menu with both file and folder browsing
+- Format detector docstring was missing `'traktor'` as a possible return value
+
+---
+
 ## [0.2.0] - 2026-03-17
 
 ### Added

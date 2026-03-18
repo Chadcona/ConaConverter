@@ -28,7 +28,7 @@ pytest tests/test_rekordbox.py -v   # single file, verbose
 pytest -k "round_trip"        # filter by test name
 ```
 
-All 45 tests run without needing any real DJ software or audio files installed. Synthetic fixtures and in-memory SQLite databases are used throughout.
+All 68 tests run without needing any real DJ software or audio files installed. Synthetic fixtures and in-memory SQLite databases are used throughout.
 
 ---
 
@@ -73,8 +73,9 @@ Adding a new format means implementing `BaseReader` and `BaseWriter` and registe
 1. `.crate` or filename `database V2` → `serato`
 2. Folder containing `m.db` → `engineos`
 3. `.db` extension → `engineos`
-4. XML root `DJ_PLAYLISTS` → `rekordbox`
-5. XML root `VirtualDJ_Database` → `virtualdj`
+4. `.nml` with root `NML` → `traktor`
+5. XML root `DJ_PLAYLISTS` → `rekordbox`
+6. XML root `VirtualDJ_Database` → `virtualdj`
 
 ### UI threading model
 
