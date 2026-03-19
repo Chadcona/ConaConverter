@@ -7,7 +7,10 @@ import sys
 
 from PySide6.QtCore import Qt, Signal
 from PySide6.QtGui import QDragEnterEvent, QDropEvent, QMouseEvent
-from PySide6.QtWidgets import QFileDialog, QLabel, QMenu, QSizePolicy
+from PySide6.QtWidgets import (
+    QDialog, QDialogButtonBox, QFileDialog, QLabel, QListWidget,
+    QListWidgetItem, QMenu, QSizePolicy, QVBoxLayout,
+)
 
 
 def _serato_crates_dir() -> str | None:
@@ -71,6 +74,45 @@ def _try_resolve_serato_text(text: str) -> str | None:
     return None
 
 
+class _SeratoCratePicker(QDialog):
+    """Dialog that lists Serato crates and lets the user pick one."""
+
+    def __init__(self, crates: list[tuple[int, str, str]], parent=None):
+        super().__init__(parent)
+        self.setWindowTitle("Select Serato Crate")
+        self.setMinimumSize(340, 300)
+        self.selected_db: str | None = None
+        self.selected_id: int | None = None
+
+        layout = QVBoxLayout(self)
+        layout.addWidget(QLabel("Which crate did you want to convert?"))
+
+        self._list = QListWidget()
+        for container_id, name, db_path in crates:
+            item = QListWidgetItem(name)
+            item.setData(Qt.ItemDataRole.UserRole, (container_id, db_path))
+            self._list.addItem(item)
+        self._list.itemDoubleClicked.connect(self._on_double_click)
+        layout.addWidget(self._list)
+
+        buttons = QDialogButtonBox(
+            QDialogButtonBox.StandardButton.Ok | QDialogButtonBox.StandardButton.Cancel
+        )
+        buttons.accepted.connect(self._on_accept)
+        buttons.rejected.connect(self.reject)
+        layout.addWidget(buttons)
+
+    def _on_accept(self) -> None:
+        item = self._list.currentItem()
+        if item:
+            self.selected_id, self.selected_db = item.data(Qt.ItemDataRole.UserRole)
+            self.accept()
+
+    def _on_double_click(self, item: QListWidgetItem) -> None:
+        self.selected_id, self.selected_db = item.data(Qt.ItemDataRole.UserRole)
+        self.accept()
+
+
 class DropZoneWidget(QLabel):
     """A label that accepts file drops and emits file_dropped(path: str)."""
 
@@ -110,12 +152,9 @@ class DropZoneWidget(QLabel):
     # ------------------------------------------------------------------
 
     def dragEnterEvent(self, event: QDragEnterEvent) -> None:
-        md = event.mimeData()
-        if md.hasUrls() or md.hasText():
-            event.acceptProposedAction()
-            self.setStyleSheet(self._STYLE_HOVER)
-        else:
-            event.ignore()
+        # Accept URLs, text, and Serato's proprietary MIME types
+        event.acceptProposedAction()
+        self.setStyleSheet(self._STYLE_HOVER)
 
     def dragLeaveEvent(self, event) -> None:
         self.setStyleSheet(self._STYLE_IDLE)
@@ -123,6 +162,15 @@ class DropZoneWidget(QLabel):
     def dropEvent(self, event: QDropEvent) -> None:
         self.setStyleSheet(self._STYLE_IDLE)
         md = event.mimeData()
+
+        # Serato drag-and-drop: sends text/vnd.serato.library.crate_uri
+        # with value like "assetlist://container/779"
+        # The ID is a session-internal ID that doesn't match the SQLite row ID,
+        # so we show a crate picker dialog instead.
+        _SERATO_CRATE_MIME = "text/vnd.serato.library.crate_uri"
+        if _SERATO_CRATE_MIME in md.formats():
+            self._show_serato_crate_picker()
+            return
 
         # Try file URLs first (e.g. dragged from File Explorer)
         if md.hasUrls():
@@ -133,14 +181,12 @@ class DropZoneWidget(QLabel):
                     self.file_dropped.emit(path)
                     return
 
-        # Try text — Serato may send crate names as plain text
+        # Try text — might be a file path or a Serato crate name
         if md.hasText():
             text = md.text().strip()
-            # Check if the text is a file path that exists
             if os.path.exists(text):
                 self.file_dropped.emit(text)
                 return
-            # Try to resolve as a Serato crate name
             resolved = _try_resolve_serato_text(text)
             if resolved:
                 self.file_dropped.emit(resolved)
@@ -204,3 +250,24 @@ class DropZoneWidget(QLabel):
         )
         if path:
             self.file_dropped.emit(path)
+
+    def _show_serato_crate_picker(self) -> None:
+        """Show a dialog listing all Serato crates from SQLite databases."""
+        from conaconverter.converters.serato import (
+            _find_serato_sqlite,
+            _list_containers_from_sqlite,
+        )
+
+        all_crates: list[tuple[int, str, str]] = []
+        for db_path in _find_serato_sqlite():
+            for cid, name, parent_id in _list_containers_from_sqlite(db_path):
+                all_crates.append((cid, name, db_path))
+
+        if not all_crates:
+            return
+
+        picker = _SeratoCratePicker(all_crates, parent=self)
+        if picker.exec() == QDialog.DialogCode.Accepted and picker.selected_id is not None:
+            # Build a serato-sqlite:// URI that the reader can resolve
+            uri = f"serato-sqlite://{picker.selected_db}?container={picker.selected_id}"
+            self.file_dropped.emit(uri)

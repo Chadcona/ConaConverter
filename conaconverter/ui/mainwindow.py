@@ -154,7 +154,11 @@ class MainWindow(QMainWindow):
         try:
             self._source_fmt = detect_format(path)
             fmt_label = FORMAT_LABELS.get(self._source_fmt, self._source_fmt)
-            self._status.setText(f"Detected: {fmt_label}  —  {os.path.basename(path)}")
+            if path.startswith("assetlist://") or path.startswith("serato-sqlite://"):
+                display_name = "Serato crate (drag-and-drop)"
+            else:
+                display_name = os.path.basename(path)
+            self._status.setText(f"Detected: {fmt_label}  —  {display_name}")
             self._convert_btn.setEnabled(True)
         except ValueError as exc:
             self._status.setText(f"Error: {exc}")
@@ -228,7 +232,14 @@ class MainWindow(QMainWindow):
             "engineos":  "",   # Engine OS is a folder
             "traktor":   ".nml",
         }
-        base = os.path.splitext(input_path)[0]
+
+        # For Serato URIs, place output on the Desktop with a generic name
+        if input_path.startswith("assetlist://") or input_path.startswith("serato-sqlite://"):
+            desktop = os.path.join(os.path.expanduser("~"), "Desktop")
+            base = os.path.join(desktop, "serato_export")
+        else:
+            base = os.path.splitext(input_path)[0]
+
         ext  = _EXTENSIONS.get(target_fmt, "")
         suffix = f"_{target_fmt}"
 

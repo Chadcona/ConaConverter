@@ -13,10 +13,16 @@ def detect_format(path: str) -> str:
 
     Raises ValueError if the format cannot be determined.
     """
+    # Serato drag-and-drop or SQLite URI
+    if path.startswith("assetlist://") or path.startswith("serato-sqlite://"):
+        return "serato"
+
     name = os.path.basename(path)
 
-    # Serato: .crate files or the 'database V2' file (no extension)
+    # Serato: .crate files, location.sqlite, or the 'database V2' file
     if path.endswith(".crate"):
+        return "serato"
+    if path.endswith("location.sqlite"):
         return "serato"
     if name == "database V2":
         return "serato"

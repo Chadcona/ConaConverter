@@ -10,11 +10,29 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 ## [Unreleased]
 
 ### Planned
+- Direct Engine OS database integration (write playlists directly into existing Engine Library)
 - Pre-built release binaries (Windows / macOS / Linux)
 - Nested playlist / folder support
 - Batch conversion (multiple files at once)
 - Key notation conversion (Camelot ↔ musical)
 - OneLibrary support (emerging universal standard — Pioneer + Algoriddim + Native Instruments)
+
+---
+
+## [0.3.0] - 2026-03-18
+
+### Added
+- Serato drag-and-drop — drag a crate from Serato DJ Pro's sidebar into ConaConverter
+  - Intercepts Serato's proprietary `text/vnd.serato.library.crate_uri` MIME type
+  - Shows a crate picker dialog listing all available crates from Serato's SQLite database
+- Serato SQLite library support — reads track metadata directly from `location.sqlite`
+- Smart browse menu — auto-detects installed DJ software and shows quick-open shortcuts
+- Drop zone accepts text drops and resolves them as file paths or Serato crate names
+- Traktor `.nml` extension in output path builder
+
+### Changed
+- Serato reader supports three input modes: `.crate` files, `location.sqlite`, and `serato-sqlite://` URIs
+- Format detector recognizes `assetlist://` and `serato-sqlite://` URIs as Serato format
 
 ---
 

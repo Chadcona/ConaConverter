@@ -33,7 +33,7 @@ Source format → Reader → Playlist/Track/CuePoint/BeatGridMarker → Writer �
 | Traktor | Paths use `/:` encoding: `/Users/john/Music/` → `/:Users/:john/:Music/:`. CUE_V2 positions are in **milliseconds**. TYPE=4 is beat grid, not a cue point. |
 | Engine OS | BLOBs use 4-byte BE length prefix + zlib. quickCues = 8 fixed hot cue slots only (no memory cues, loops, or fades). Beat grid positions are in **samples**. |
 | Rekordbox | Uses XML export only (`rekordbox.xml`), NOT `master.db` (encrypted with SQLCipher). POSITION_MARK `Num=-1` = memory cue. Positions in seconds. |
-| Serato | Cue/grid data stored as GEOB ID3 tags **inside audio files**. Writing modifies audio files — always warn. Cue positions in ms, beat grid in samples. |
+| Serato | Modern Serato uses SQLite (`location.sqlite`) on each drive, NOT `.crate` files. Cue/grid data stored as GEOB ID3 tags **inside audio files**. Drag-and-drop from Serato sends `text/vnd.serato.library.crate_uri` MIME with `assetlist://container/NNN` — the NNN is a session-internal ID that does NOT match the SQLite row ID. Use the crate picker dialog instead. |
 
 ### Converter registry
 
@@ -52,7 +52,7 @@ conaconverter/
     base.py            # Abstract BaseReader / BaseWriter
     __init__.py        # READERS / WRITERS / FORMAT_LABELS registry
     rekordbox.py       # xml.etree.ElementTree
-    serato.py          # serato-tools library
+    serato.py          # serato-tools + SQLite library reader + drag-and-drop URI resolver
     engineos.py        # sqlite3 + zlib BLOB codec
     virtualdj.py       # xml.etree.ElementTree
     traktor.py         # xml.etree.ElementTree
@@ -91,11 +91,13 @@ docs/
 ## UI
 
 - Dark-themed PySide6 window with drag-and-drop zone
-- Click zone shows context menu: "Browse for file" or "Browse for folder (Engine OS)"
+- Accepts drops from File Explorer AND directly from Serato DJ Pro (proprietary MIME handling)
+- Click zone shows smart context menu with auto-detected DJ software shortcuts (Serato Crates, Rekordbox XML, Traktor Collection) plus generic file/folder browse
+- Serato drag-and-drop triggers a crate picker dialog (because Serato's session IDs don't map to SQLite IDs)
 - Format auto-detected on drop; target format selected via dropdown
 - Conversion runs in QThreadPool (non-blocking)
 - Warning dialog shown before Serato writes (modifies audio files)
-- Output placed next to input with format suffix (e.g. `MyPlaylist_rekordbox.xml`)
+- Output placed next to input with format suffix (e.g. `MyPlaylist_rekordbox.xml`); Serato URI outputs go to Desktop
 
 ## Things to watch out for
 
@@ -107,6 +109,7 @@ docs/
 
 ## Future targets
 
+- Direct Engine OS database integration (write playlists directly into existing Engine Library m.db — current workaround is to convert to Rekordbox XML and import via Engine DJ's built-in Rekordbox import)
 - OneLibrary (emerging universal standard by Pioneer + Algoriddim + Native Instruments)
 - Nested playlist/folder support
 - Key notation conversion (Camelot <-> musical)
