@@ -226,6 +226,7 @@ class MainWindow(QMainWindow):
             "virtualdj": ".xml",
             "serato":    ".crate",
             "engineos":  "",   # Engine OS is a folder
+            "traktor":   ".nml",
         }
         base = os.path.splitext(input_path)[0]
         ext  = _EXTENSIONS.get(target_fmt, "")
