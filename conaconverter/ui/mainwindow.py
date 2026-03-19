@@ -18,6 +18,7 @@ from PySide6.QtWidgets import (
 )
 from PySide6.QtCore import QUrl
 
+from conaconverter import __version__
 from conaconverter.converters import FORMAT_LABELS, READERS, WRITERS
 from conaconverter.detector import detect_format
 from conaconverter.ui.widgets import DropZoneWidget
@@ -104,7 +105,7 @@ QPushButton#convert_btn:pressed {
 class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
-        self.setWindowTitle("ConaConverter")
+        self.setWindowTitle(f"ConaConverter v{__version__}")
         self.setMinimumSize(480, 380)
         self.resize(520, 420)
         self.setStyleSheet(_APP_STYLE)
